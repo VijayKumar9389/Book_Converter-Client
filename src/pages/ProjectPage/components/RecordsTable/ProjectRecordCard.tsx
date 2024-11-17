@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from "axios";
+import {apiClient} from "../../../../utils/interceptors.ts";
 
 interface ProjectRecord {
     position: number;
@@ -41,7 +41,7 @@ const ProjectRecordCard: React.FC<ProjectRecordCardProps> = ({ record, projectId
             setLoading(true);
             setError(null);
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/projects/completed-records/${projectId}/${record.position}/`);
+                const response = await apiClient.get(`http://127.0.0.1:8000/api/projects/completed-records/${projectId}/${record.position}/`);
                 if (response.data.length > 0) {
                     setCompletedRecord(response.data[0]);
                 } else {

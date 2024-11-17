@@ -16,13 +16,16 @@ const RefreshTokenForm = () => {
         try {
             const response = await axios.post(
                 'http://localhost:8000/api/refresh/',
-                {},
+                { refresh: refreshToken },
                 {
                     headers: {
-                        Authorization: `Bearer ${refreshToken}`, // Use the correct format for headers
-                    },
+                        'Content-Type': 'application/json', // Use the correct format for headers
+                    }
                 }
             );
+
+            // set the new access token in the local storage
+            localStorage.setItem('accessToken', response.data.access);
 
             // Assuming you'll want to handle the response here, e.g., storing the new access token
             console.log('New access token:', response.data);

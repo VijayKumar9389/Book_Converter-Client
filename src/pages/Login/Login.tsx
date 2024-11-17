@@ -1,33 +1,31 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext} from "../../context/auth.context.tsx";
 
-interface LoginFormProps {
-    onLoginSuccess: (accessToken: string, refreshToken: string) => void;
-}
-
-const Login: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+const Login: React.FC = () => {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
+    const { setAuthData } = useAuthContext();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8000/api/login/', {
+            const response = await axios.post("http://localhost:8000/api/login/", {
                 username,
                 password,
             });
             const { access, refresh } = response.data;
-            // Save tokens in local storage or a secure location
-            localStorage.setItem('accessToken', access);
-            localStorage.setItem('refreshToken', refresh);
-            onLoginSuccess(access, refresh);
+
+            // Save tokens and username in context
+            setAuthData(username, access, refresh);
+
             // Redirect user after login
-            navigate('/');
+            navigate("/");
         } catch (err: any) {
-            setError('Invalid credentials');
+            setError("Invalid credentials");
         }
     };
 

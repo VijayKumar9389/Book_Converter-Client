@@ -10,17 +10,36 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+
     const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent form submission default behavior
+
+        setError(''); // Clear any previous error message
+
         try {
             const response = await axios.post('http://localhost:8000/api/login/', {
                 username,
                 password,
             });
+
+            // Extract tokens from the response
             const { access, refresh } = response.data;
+
+            // Store tokens in localStorage (or sessionStorage as per your requirement)
+            localStorage.setItem('accessToken', access);
+            localStorage.setItem('refreshToken', refresh);
+
+            // Notify parent component of login success
             onLoginSuccess(access, refresh);
+
         } catch (err: any) {
-            setError('Invalid credentials');
+            if (err.response && err.response.status === 401) {
+                setError('Invalid username or password'); // Handle 401 Unauthorized error
+            } else {
+                setError('An unexpected error occurred. Please try again later.');
+            }
+
+            console.error('Login error:', err.response?.data || err.message); // Log error details for debugging
         }
     };
 

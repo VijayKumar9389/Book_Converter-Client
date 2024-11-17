@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import {useAuthContext} from "../../../../context/auth.context.tsx";
+import {apiClient} from "../../../../utils/interceptors.ts";
 
 // Define the type for a Project
 interface Project {
@@ -14,6 +15,7 @@ const ProjectsTable: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
+    const auth = useAuthContext();
 
     const handleRowClick = (projectId: number) => {
         navigate(`/projects/${projectId}`);
@@ -22,11 +24,8 @@ const ProjectsTable: React.FC = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const token = localStorage.getItem('accessToken');
-                const response = await axios.get('http://127.0.0.1:8000/api/projects/', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                const response = await apiClient.get('http://127.0.0.1:8000/api/projects/', {
+
                 });
                 setProjects(response.data);
             } catch (error) {
@@ -47,6 +46,7 @@ const ProjectsTable: React.FC = () => {
                 </div>
             ) : (
                 <div className="overflow-x-auto">
+                    <h1>Welcome {auth.username}</h1>
                     <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
                         <thead>
                         <tr className="bg-gray-100">

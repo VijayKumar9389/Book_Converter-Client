@@ -1,7 +1,7 @@
 // ProjectRecords.tsx
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import ProjectRecordCard from './ProjectRecordCard.tsx';
+import {apiClient} from "../../../../utils/interceptors.ts";
 
 interface ProjectRecord {
     position: number;
@@ -41,11 +41,8 @@ const ProjectRecords: React.FC<ProjectRecordsProps> = ({ projectId }) => {
     useEffect(() => {
         const fetchProjectRecords = async () => {
             try {
-                const token = localStorage.getItem('accessToken');
-                const response = await axios.get(`http://127.0.0.1:8000/api/projects/${projectId}/`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                const response = await apiClient.get(`http://127.0.0.1:8000/api/projects/${projectId}/`, {
+
                 });
                 setRecords(response.data);
             } catch (error) {
